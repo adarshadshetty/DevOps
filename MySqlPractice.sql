@@ -1,0 +1,1419 @@
+create database class2_db;
+use class2_db;
+create table if not exists employee
+(
+id int ,
+name varchar(50),
+address varchar(50),
+city varchar(50)
+);
+
+insert into employee values(1,'Adarsha','Perdoor','Udupi');
+
+select * from employee;
+
+
+-- Why Alter command we need.
+-- Alter Command.
+-- It will comw under DDL Category.
+-- we are changing the structure of table.
+-- it will also used to work with constraints.
+
+-- to add new coloumn DOB in the TABLE.
+alter table employee add DOB date;
+-- what will be value inside the table 'NULL'
+select * from emplyoee; -- name error
+-- Error Code: 1146. Table 'class2_db.emplyoee' doesn't exist
+
+use class2_db;
+
+show tables;
+select*from employee;
+
+-- what if data exceeding the defined length
+-- here we need to modify the coloumn
+-- modify existing column in a TABLE or change datatype of name coloumn or 
+alter table employee modify column name  varchar(100);
+
+desc employee;
+-- same command
+show create table employee;
+
+alter table employee modify column address varchar(100);
+
+desc employee;
+
+-- what if their any unwanted coloumn
+-- drop the city coloumn
+alter table employee drop column city;
+select * from employee;
+
+-- to change the column to ABC to HKLI
+-- or changing the name 
+-- change name to full_name
+
+alter table employee rename column name to full_name;
+select * from employee;
+
+-- let's see how to use Alter command with constraints
+-- for this drop this table 
+drop table employee;
+
+-- '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+-- To Add the constrains to a table
+create table if not exists employee
+(
+id int ,
+name varchar(50),
+age int,
+hiring_date date,
+salary int,
+city varchar(50)
+);
+insert into employee values(1,'Shashank', 24, '2021-08-10', 10000, 'Lucknow');
+insert into employee values(2,'Rahul', 25, '2021-08-10', 20000, 'Khajuraho');
+insert into employee values(3,'Sunny', 22, '2021-08-11', 11000, 'Banaglore');
+insert into employee values(5,'Amit', 25, '2021-08-11', 12000, 'Noida');
+insert into employee values(6,'Puneet', 26, '2021-08-12', 50000, 'Gurgaon');
+
+select * from employee;
+-- to add constraints with the help of Alter command
+-- to make id column unique
+-- add unique integrity constraint on id column
+-- applying the unique to id column
+alter table employee add constraint id_unique unique(id);
+
+desc employee;
+-- try to insert to something
+insert into employee value(1,'sdsd',23,'2021-08-10',50000,'udupi');
+-- Error Code: 1062. Duplicate entry '1' for key 'employee.id_unique'
+
+-- after again remove the constraint command
+alter table employee drop constraint id_unique;
+desc employee;
+
+-- try to insert to something again it will execute
+insert into employee value(1,'sdsd',23,'2021-08-10',50000,'udupi');
+select * from employee;
+
+-- ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+-- Primary Keys vs Foreign Key
+-- VImp for Interview Part
+
+-- primary_key and Foreign_Key
+-- 1.Primary Key:
+-- why same employee ID  --> There will be difficulty in identifying the two different people
+-- A column or Combination of coloumn which can uniquly identify a record from a table. 
+
+-- Foreign Key-->
+-- A primary key of another first table which can be refered in second table will be know as foreign key.
+-- referencial Integrity
+
+-- let we are working on a e-commerce data
+-- create table with Primary_Key
+-- constraints pk primary key (id)
+
+create table persons
+(
+id int,
+name varchar(50),
+age int,
+primary key (id)
+);
+insert into persons values(1,'Adarsha',29);
+insert into persons values(1,'Adarsha',29);
+-- Error Code: 1062. Duplicate entry '1' for key 'persons.PRIMARY'
+-- let's try this
+insert into persons value(null,'Rahul',20);
+-- Error Code: 1048. Column 'id' cannot be null--> primary key is should not be null
+
+-- create table for Foreign Key demo
+use class2_db;
+create table customer
+(
+cust_id int,
+name varchar(50),
+age int,
+constraint pk primary key(cust_id)
+);
+-- Error Code: 1046. No database selected Select the default DB to be used by double-clicking its name in the SCHEMAS list in the sidebar.
+-- Error Code: 1050. Table 'customer' already exists
+
+create table orders
+(
+order_id int,
+order_num int,
+customer_id int,
+constraint pk primary key(order_id),
+constraint fk foreign key(customer_id) references customer(cust_id)
+);
+
+insert into customer values(1,'Shashank',29);
+insert into customer values(2,'Rahul',30);
+
+select * from customer;
+
+
+insert into orders values(1001,20,1);
+insert into orders values(1002,30,2);
+
+select * from orders;
+
+-- one more 
+insert into orders values(1004,35,5);
+-- will fail --Error Code: 1452. Cannot add or update a child row: a foreign key constraint fails (`class2_db`.`orders`, CONSTRAINT `fk` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`cust_id`))
+-- this is REFERENCIAL INTEGRITY referencial integrity😊😊😊😊.
+-- because there will be no customer id 5 in customer table. 
+
+-- ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+-- Imp Interview Question 
+-- difference between drop and truncate
+-- truncate table usually used to drop a particular table.
+-- truncate only delete the data in the table. it will not delete metadata of table
+
+truncate table persons;
+select * from persons;
+
+-- drop table persons;  will delete entire table.
+-- it will not exist.
+-- '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+
+select * from employee; -- all the column in the table. 
+
+-- to pull the all the count
+select count(*) from employee;
+
+-- Interview
+select count(1) from employee;
+
+select count(1000) from employee; -- it will execute 
+-- count function will not expect any parameter. 
+-- it will putting like marker.
+-- count(*) * act as marker it will only count *
+
+-- Giving the alias name total_row_count
+select count(*) as total_row_count from employee;
+-- '''''''
+select name as employee_name,
+	   salary as employee_salary
+from employee;
+
+select * from employee;
+
+-- hiring date here repeated
+-- we will use distinct function
+select Distinct (hiring_date) as distinct_hiring_date from employee;
+
+-- count function on distinct function.
+select count(Distinct (hiring_date)) as distinct_hiring_date_counts 
+ from employee;
+ 
+ -- during the select operation we will do mathematical operation.
+ -- add 20% to a existing salary.
+select id,
+        name,
+        salary as old_salary,
+        (salary + salary*0.2) as new_salary
+from employee;
+
+
+-- let's see the category 
+-- update command 
+-- category DML
+
+select * from employee;
+
+-- updates will be made for all rows
+use class2_db;
+update employee set age =20;
+-- Error Code: 1175. You are using safe update mode and you tried to update a table without a WHERE that uses a KEY column.  To disable safe mode, toggle the option in Preferences -> SQL Editor and reconnect.
+-- Error Code: 1049. Unknown database 'test2_db'
+-- it will update all the column
+select * from employee;
+
+-- to update  multiple column 
+update employee set age=25 ,salary=salary*1.2;
+
+select * from employee;
+
+-- to selective update.
+-- data filtration important in data pipeline
+-- for that we will use the where clause
+select * from employee where hiring_date = '2021-08-10';
+
+-- set salary 80000 for this 2021-08-10 hiring date
+update employee set salary = 80000 where hiring_date='2021-08-10';
+select * from employee;
+
+-- delete command
+-- selective delete
+delete from employee where name ='sdsd';
+
+select * from employee;
+select count(*) from employee;
+
+
+-- commit
+-- rollback
+rollback;
+select * from employee;
+
+-- Auto_Increament  part 
+-- Dynamicaly doing the auoincreament. 
+-- in indexing auto increament is used in specific column
+
+-- how to apply auto increament
+create table auto_inc_exmp
+(
+id int auto_increment,
+name varchar(20),
+primary key (id)
+);
+insert into auto_inc_exmp(name) values('Shashank');
+insert into auto_inc_exmp(name) values('Rahul');
+insert into auto_inc_exmp(name) values('Adarsha');
+
+select * from auto_inc_exmp;
+-- id column automatically get increamented.
+
+
+-- limit keyword
+select * from employee limit 1;
+select * from employee limit 3;
+
+-- ley's see the How the data arrangement for Mysql
+
+select *from employee;
+
+-- order by clause
+-- output that generated in which order that output will displayed like ASC or DESC
+
+select * from employee order by name;
+
+-- DESC order 
+select * from employee order by name desc;
+
+
+-- arrange the data in desc order of salary
+update employee set salary =20000 where name ='Shashanka'; 
+update employee set salary =20000 where name ='Puneeth'; 
+
+select * from employee;
+
+-- display employee data in desc order of salary and if salaries are same for more than one employee 
+-- arrange their data asc order of name 
+select * from employee order by salary desc,
+name asc;
+-- write a query to find employee who is getting maximum salary. 
+-- only one employee
+-- select max(salary) from employee limit 1;wrong 
+-- use order by 
+select * from employee order by salary desc limit 1; -- correct 
+
+-- find mini salary 
+select * from employee order by salary asc limit 1;
+
+
+-- '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+-- let's starts with the conditional commands.
+-- list all employee who are getting less than 20000
+select * from employee where salary < 20000;
+-- Error Code: 1146. Table 'class2_db.emplyoee' doesn't exist
+
+-- less than or equal to 20000
+select * from employee where salary <= 20000;
+
+-- filter the record where age of employee is equal to 20
+select * from employee where age =28;
+
+-- filter the record where age of employee is not equal to 25
+-- we can use != or we can use <> 25 
+select * from employee;
+
+select * from employee where age != 20;
+select * from employee where age <> 20;
+-- selective filter
+-- find those employee who joined the company on 2021-08-11 and
+-- their salary less 11500
+-- applying the more than one condition
+
+insert into employee values(1,'Shashank', 24, '2021-08-10', 10000, 'Lucknow');
+insert into employee values(2,'Rahul', 25, '2021-08-10', 20000, 'Khajuraho');
+insert into employee values(3,'Sunny', 22, '2021-08-11', 11000, 'Banaglore');
+insert into employee values(5,'Amit', 25, '2021-08-11', 12000, 'Noida');
+insert into employee values(6,'Puneet', 26, '2021-08-12', 50000, 'Gurgaon');
+
+select * from employee where hiring_date ='2021-08-11' and salary<11500;
+
+-- find those employee who joined the company
+-- after 2021-08-11 or their salary in less than 20000
+select * from employee where hiring_date > '2021-08-11' or salary<2000;
+
+
+-- how to use Between operation in where clause
+-- get all employee data who joined the company
+-- between hiring_date 2021-08-05 to 2021-08-11
+select * from employee 
+where hiring_date
+between '2021-08-05' and '2021-08-11';
+
+-- values are inclusive
+-- get all employee data who are getting
+-- salary in the range of 10000 to 20000
+select * from employee 
+where salary
+between 10000 and 20000;
+
+
+-- How to use the like operation
+-- to work with string type of column 
+-- to work with pattern based data
+
+
+-- % zero or more than zero character
+-- - exactly one character --> DOG CAT RAT  for dog _ _ _ 
+-- APPLE _ _ _ _ _ 5 char
+-- ORANGE _ _ _ _ _ _ 6 char
+-- Amith
+-- Anil
+-- Akash
+-- Abhishekh
+-- % is a fetching the recorde with starting with element ' A '
+select * from employee;
+-- get all those employee whose name starts with 'S'
+select * from employee where name like 'S%';
+
+-- get all those employee whose name ends with  'l'
+select * from employee where name like '%l';
+select * from employee;
+
+-- get all those employee whose namee starts with 'S' and ends with 'k'
+select * from employee where name like 'S%k';
+
+-- Get all those employee whose name will have exact 5 character
+select * from employee where name like '_____';
+
+
+select * from employee;
+-- Return all those employee whose name contains atleast 5 characters
+select * from employee where name like '%_____';
+select * from employee where name like '_____%';
+select * from employee where name like '%_____%';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Class 3 
+
+
+
+use class2_db;
+-- let's try to insert into a NULL
+insert into employee values(10,'Kapil',null,'2021-08-10',10000,'Assam');
+insert into employee values(11,'Nikhil',30,'2021-08-10',NULL,'Assam');
+
+select * from employee;
+
+-- get all those employee whoes age value is null
+select * from employee where age is null;
+
+-- get all those employee whoes salary value is not null
+select * from employee where  salary is not null;
+
+-- Super important topic 
+-- group by clause
+-- grouping key
+-- you have to do some aggregation
+-- Any other column apart from group by can only be used with aggregation function
+--  used for data Analysis
+
+-- Table and data for Group By 
+create table orders_data
+(
+ cust_id int,
+ order_id int,
+ country varchar(50),
+ state varchar(50)
+);
+insert into orders_data values(1,100,'USA','Seattle');
+insert into orders_data values(2,101,'INDIA','UP');
+insert into orders_data values(2,103,'INDIA','Bihar');
+insert into orders_data values(4,108,'USA','WDC');
+insert into orders_data values(5,109,'UK','London');
+insert into orders_data values(4,110,'USA','WDC');
+insert into orders_data values(3,120,'INDIA','AP');
+insert into orders_data values(2,121,'INDIA','Goa');
+insert into orders_data values(1,131,'USA','Seattle');
+insert into orders_data values(6,142,'USA','Seattle');
+insert into orders_data values(7,150,'USA','Seattle');
+
+select * from orders_data;
+
+# calculate total order placed country wise
+select country, 
+          count(*) as order_count_by_each_country 
+from orders_data
+ group by country;
+
+
+select * from employee;
+
+-- write the query to find the total salary by each age group from employee table
+select * from employee;
+
+select age ,
+sum(salary) as total_salary_by_each_group -- inbuilt function
+from employee 
+group by age;
+
+
+
+-- important below please follow
+select age ,
+name,        -- non aggregated coloumn will not going to work. 
+sum(salary) as total_salary_by_each_group -- inbuilt function
+from employee 
+group by age;
+-- Error Code: 1055. Expression #2 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'class2_db.employee.name' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+-- error because agreggation
+
+
+-- Type of aggregation function we can use. 
+# calculate different aggregated metrices for salary
+select age, 
+	   sum(salary) as total_salary_by_each_age_group,
+       max(salary) as max_salary_by_each_age_group,
+       min(salary) as min_salary_by_each_age_group,
+       avg(salary) as avg_salary_by_each_age_group,
+       count(*) as total_employees_by_each_age_group
+from employee
+group by age;
+
+-- Applying grouping for more than one column.  
+select * from orders_data;
+
+select 
+state,
+count(*) as state_wise_order
+from orders_data
+group by country,state;
+
+-- '''''''''''''''''''''''''''''''''''''' 
+select 
+country,
+state,
+count(*) as state_wise_order
+from orders_data
+group by country,state;
+
+-- Applying where clause to a specofic group
+-- for this we are using the having clause.
+
+select 
+country,
+count(*) as country_wise_order
+from orders_data
+group by country;
+
+
+-- use of having Clause
+-- Write a query to find the country where only 1 order was placed
+select
+country,
+count(*) as country_wise_order
+from orders_data
+group by country
+having count(*) =1;
+
+-- What is difference 'where' clause and 'having'
+-- one query acting query to a another query result
+select *
+from
+(select
+country,
+count(*) as country_wise_order
+from orders_data
+group by country) result
+where country_wise_order=1;
+
+-- select * from result; above method
+
+
+-- NOW LET'S TALK ABOUT PRODUCTION LEVEL QUERY.
+-- If u have huge amount of or 1 year data -- u can give data of december month of 2022
+-- where , group by -- faster this one -- huge amount to cloud 
+-- group by ,where --> this does not make sense at all.
+
+
+# How to use GROUP_CONCAT
+# Query - Write a query to print distinct states present in the dataset for each country?
+
+select country,
+       group_concat(state) as state_in_country
+from orders_data
+group by country;
+
+-- Now question is how we can delete duplicate
+
+-- Duplicate value Removed
+select country,
+       group_concat(distinct state order by state desc) as state_in_country
+from orders_data
+group by country;
+
+
+# Puting the Separator <->
+select country,
+       group_concat(distinct state order by state desc separator '<->') as state_in_country
+from orders_data
+group by country;
+
+-- Write a query to print all those employee 
+-- Record who are getting more salary than 'Rohan'
+use class2_db;
+select * from employee where salary >
+(select salary from employee where  lower(name) ='amit');
+
+-- Error Code: 1242. Subquery returns more than 1 row
+
+
+select * from employee;
+
+-- Answer
+select salary from employee where  lower(name) ='rahul';
+
+-- ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+select * from orders_data;
+
+-- Write a query to print
+-- All orders which belongs to states 'Seattle' or 'Goa'
+-- Use of IN and NOT IN clause
+
+select * from orders_data where state in('Seattle','Goa');
+
+
+
+
+-- '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+create table customer_order_data
+(
+    order_id int,
+    cust_id int,
+    supplier_id int,
+    cust_country varchar(50)
+);
+insert into customer_order_data 
+values
+(101,200,300,'USA'),
+(102,201,301,'INDIA'),
+(103,202,302,'USA'),
+(104,203,303,'UK');
+
+select* from customer_order_data;
+
+create table supplier_data
+(
+supplier_id int,
+sup_country varchar(50)
+);
+insert into supplier_data values(300,'USA'),(303,'UK');
+
+-- write a query to find all customer orders
+-- data where all customers are from same countries
+-- as the suppliers
+select *
+from customer_order_data
+where cust_country in (select distinct sup_country from supplier_data);
+
+-- Above Method can be same as below
+select *
+from customer_order_data
+where cust_country in ('USA','UK');
+
+select * from customer_order_data;
+
+
+
+create table students
+(
+id int,
+name varchar(50),
+mark int
+);
+insert into students values(1,'Shashank',45),
+(2,'Rahul',95),
+(3,'Amit',74),
+(4,'Harsh',82),
+(5,'Nikhil',65);
+
+-- > 90 , A Grade
+-- >=80  and < 90 B+
+-- >=70 and <80  B 
+-- >=60 and <70 C 
+-- < 60 D 
+
+select 
+   *,
+case
+    when mark>= 90 then 'A'
+    when mark>80 and mark<90 then 'B+'
+    when mark>=70 and mark<80 then 'B'
+    when mark>=60 and mark<=70 then 'C'
+    else 'D'
+end as grade
+From students;
+
+-- Interview Question Uber
+create table tree
+(
+    node int,
+    parent int
+);
+
+insert into tree values (5,8),(9,8),(4,5),(2,9),(1,5),(3,9),(8,null);
+
+select * from tree;
+
+select node,
+       CASE
+            when node not in (select distinct parent from tree where parent is not null) then 'LEAF'
+            when parent is null then 'ROOT'
+            else 'INNER'
+       END as node_type
+from tree;
+
+
+
+-- '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+-- '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+
+--  JOINs
+--  Cross join --> T1=3 and T2=5--> 3*5=15 records. 
+
+
+-- Inner Join -->  Table_1 and Table_2 
+
+-- select*
+-- from Tb1 
+-- Inner join Tb2 
+-- ON Tb1.c3 =Tb2.c5      only write the recorde where values are matching. 
+
+-- left Join table_1 on left and table_2 on right side 
+
+-- Right Join
+-- left Join table_1 on left and table_2 on right side 
+
+-- Full Outer Join
+-- Self Join
+
+use class2_db;
+create table order1
+(
+    order_id int,
+    cust_id int,
+    order_dat date, 
+    shipper_id int
+);
+
+create table customers1
+(
+    cust_id int,
+    cust_name varchar(50),
+    country varchar(50)
+);
+
+create table shippers
+(
+    ship_id int,
+    shipper_name varchar(50)
+);
+insert into order1 values(10308, 2, '2022-09-15', 3);
+insert into order1 values(10309, 30, '2022-09-16', 1);
+insert into order1 values(10310, 41, '2022-09-19', 2);
+
+insert into customers1 values(1, 'Neel', 'India');
+insert into customers1 values(2, 'Nitin', 'USA');
+insert into customers1 values(3, 'Mukesh', 'UK');
+
+insert into shippers values(3,'abc');
+insert into shippers values(1,'xyz');
+
+
+select* from order1;
+select* from customers1;
+select * from shippers;
+
+
+-- Perform inner JOIN'
+-- Get the customer information for each order order
+-- If value of customer is present in orders TABLE
+
+select
+o.*,c.*
+from order1 o 
+inner join customers1 c on o.cust_id = c.cust_id;
+
+-- Error Code: 1146. Table 'class2_db.orders1' doesn't exist
+
+
+-- Left Join
+select 
+o.*,c.*
+from order1 o left join customers1 c
+on o.cust_id=c.cust_id;
+
+
+# Right Join
+select 
+o.*, c.*
+from order1 o
+right join customers1 c on o.cust_id = c.cust_id;
+
+
+# How to join more than 2 datasets?
+# perform inner JOIN
+# get the customer informations for each order order, 
+-- if value of customer is present in orders TABLE
+# also get the information of shipper name
+-- This is a Multi level Join. 
+-- Always prefer the Left Join in the Interview
+-- Don't Use inner join because the you lose the data. 
+select 
+o.*,
+c.*,
+s.*
+from order1 o
+inner join customers1 c 
+on o.cust_id=c.cust_id
+
+inner join shippers s 
+on o.shipper_id = s.ship_id;
+
+-- Error Code: 1052. Column 'cust_id' in on clause is ambiguous
+-- Error Code: 1064. You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'elect  o.*, c.*, s.* from order1 o inner join customers1 c  on cust_id=c.cust_id' at line 1
+-- Error Code: 1052. Column 'cust_id' in on clause is ambiguous
+
+
+--- Group RollUP
+use class2_db;
+CREATE TABLE payment (payment_amount decimal(8,2), 
+payment_date date, 
+store_id int);
+ 
+INSERT INTO payment
+VALUES
+(1200.99, '2018-01-18', 1),
+(189.23, '2018-02-15', 1),
+(33.43, '2018-03-03', 3),
+(7382.10, '2019-01-11', 2),
+(382.92, '2019-02-18', 1),
+(322.34, '2019-03-29', 2),
+(2929.14, '2020-01-03', 2),
+(499.02, '2020-02-19', 3),
+(994.11, '2020-03-14', 1),
+(394.93, '2021-01-22', 2),
+(3332.23, '2021-02-23', 3),
+(9499.49, '2021-03-10', 3),
+(3002.43, '2018-02-25', 2),
+(100.99, '2019-03-07', 1),
+(211.65, '2020-02-02', 1),
+(500.73, '2021-01-06', 3);
+
+--- Write a query to calculate total reveue of each shop
+--- per year, also display year wise revenue
+
+SELECT
+  SUM(payment_amount),
+  YEAR(payment_date) AS 'Payment Year',
+  store_id AS 'Store'
+FROM payment
+GROUP BY YEAR(payment_date), store_id WITH ROLLUP
+ORDER BY YEAR(payment_date), store_id;
+
+-- Difference Between the  Materialize Views  and  Views in the interview . 
+
+-- Any and All operation . 
+--- Write a query to calculate total revenue per year
+
+SELECT
+  SUM(payment_amount),
+  YEAR(payment_date) AS 'Payment Year'
+FROM payment
+GROUP BY YEAR(payment_date)
+ORDER BY YEAR(payment_date);
+
+# Any Operation 
+
+
+CREATE TABLE Student (
+    StudentID INT,
+    StudentName VARCHAR(50)
+);
+
+INSERT INTO Student VALUES 
+(1, 'John'),
+(2, 'Alice'),
+(3, 'Bob');
+
+CREATE TABLE Courses (
+    CourseID INT,
+    CourseName VARCHAR(50)
+);
+
+INSERT INTO Courses VALUES 
+(100, 'Math'),
+(101, 'English'),
+(102, 'Science');
+
+CREATE TABLE Enrollments (
+    StudentID INT,
+    CourseID INT
+);
+
+INSERT INTO Enrollments VALUES 
+(1, 100),
+(1, 101),
+(2, 101),
+(2, 102),
+(3, 100),
+(3, 102);
+
+
+-- Let's find the students who 
+-- Are enrolled in any course taken by 'John'
+
+-- now we will write outer part of it. 
+select s.StudentName
+from Student s
+inner join Enrollments e
+on s.StudentID=e.StudentID
+where e.CourseID = 
+Any(select 
+e2.CourseID
+from enrollments e2
+inner join student s2
+on e2.StudentID=s2.StudentID
+where s2.StudentName = 'john');
+
+
+
+-- Put below course in Any
+select 
+e2.CourseID
+from enrollments e2
+inner join student s2
+on e2.StudentID=s2.StudentID
+where s2.StudentName = 'john';
+
+
+
+-- Example: Lets find the students who are enrolled in any course taken by 'John':
+
+Select Distinct s.StudentName
+From Student s
+INNER JOIN Enrollments e ON s.StudentID = e.StudentID
+WHERE s.StudentName <> 'John' and e.CourseID = ANY (SELECT e2.CourseID
+    FROM Enrollments e2
+    INNER JOIN Student s2 ON e2.StudentID = s2.StudentID
+    WHERE s2.StudentName = 'John');
+
+-- let's see
+Insert into enrollments values(4,108),(4,109);
+insert into Student values(4,'Martin');
+-- Again Same
+Select Distinct s.StudentName
+From Student s
+INNER JOIN Enrollments e ON s.StudentID = e.StudentID
+WHERE s.StudentName <> 'John' and e.CourseID = ANY (SELECT e2.CourseID
+    FROM Enrollments e2
+    INNER JOIN Student s2 ON e2.StudentID = s2.StudentID
+    WHERE s2.StudentName = 'John');
+    
+    
+    
+    
+# All
+
+CREATE TABLE Products (
+    ProductID INT,
+    ProductName VARCHAR(50),
+    Price DECIMAL(5,2)
+);
+
+INSERT INTO Products VALUES 
+(1, 'Apple', 1.20),
+(2, 'Banana', 0.50),
+(3, 'Cherry', 2.00),
+(4, 'Date', 1.50),
+(5, 'Elderberry', 3.00);
+
+
+CREATE TABLE Orders1 (
+    OrderID INT,
+    ProductID INT,
+    Quantity INT
+);
+
+INSERT INTO Orders1 VALUES 
+(1001, 1, 10),
+(1002, 2, 20),
+(1003, 3, 30),
+(1004, 1, 5),
+(1005, 4, 25),
+(1006, 5, 15);
+
+insert into orders1 values
+(1001,3,5);
+
+
+-- Now, suppose we want to find the products that have a price less than 
+-- the price of all products ordered in order 1001:
+
+-- (1,3)->(1.2,2.0)
+-- products ... where price of that product is less than the all values
+-- mentioned in this list (1.2,2.0)
+
+select pr.Price
+from Products pr
+inner join Orders1 o
+on pr.ProductID=o.ProductID
+where o.OrderID=1001;
+
+-- now you write the outer part 
+select p.productName
+from products p
+where p.price < All(select pr.Price
+from Products pr
+inner join Orders1 o
+on pr.ProductID=o.ProductID
+where o.OrderID=1001);
+
+
+-- Table LookUp and finding the answer is interview in the Meta facebook question. 
+-- Let's find the customers who have placed at least one order. 
+-- For Exist Operation .
+# EXISTS Operation
+
+CREATE TABLE Customers (
+    CustomerID INT,
+    CustomerName VARCHAR(50)
+);
+
+INSERT INTO Customers VALUES 
+(1, 'John Doe'),
+(2, 'Alice Smith'),
+(3, 'Bob Johnson'),
+(4, 'Charlie Brown'),
+(5, 'David Williams');
+
+
+select c.CustomerName
+from Customers c
+where exists(
+    select o.OrderID
+    from orders o
+    where o.CustomerID = c.CustomerID
+);
+-- Error Code: 1146. Table 'class2_db.customers' doesn't exist
+-- Error Code: 1054. Unknown column 'c.CustomerName' in 'field list'
+-- Error Code: 1054. Unknown column 'o.CustomerID' in 'where clause'
+-- Error Code: 1054. Unknown column 'o.OrderID' in 'field list'
+
+SELECT c.CustomerName
+FROM Customers c
+WHERE EXISTS (
+    SELECT 1
+    FROM Orders1 o
+    WHERE o.CustomerID = c.CustomerID
+);
+
+-- Error Code: 1054. Unknown column 'o.CustomerID' in 'where clause'
+
+
+CREATE TABLE Orders2 (
+    OrderID INT,
+    CustomerID INT,
+    OrderDate DATE
+);
+
+INSERT INTO Orders2 VALUES 
+(1001, 1, '2023-01-01'),
+(1002, 2, '2023-02-01'),
+(1003, 1, '2023-03-01'),
+(1004, 3, '2023-04-01'),
+(1005, 5, '2023-05-01');
+
+SELECT c.CustomerName
+FROM Customers c
+WHERE EXISTS (
+    SELECT o.OrderID
+    FROM Orders2 o
+    WHERE o.CustomerID = c.CustomerID
+);
+
+-- let's find the customers who have not placed any orders.
+use class2_db; 
+
+-- Error Code: 1049. Unknown database 'orders2'
+SELECT c.CustomerName
+FROM Customers c
+WHERE NOT EXISTS (
+    SELECT o.OrderID
+    FROM Orders2 o
+    WHERE o.CustomerID = c.CustomerID
+);
+
+--  IN operator why not we use here
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Windows Function -- 100 % will asked in interview .
+create table shop_sales_data
+(
+sales_date date,
+shop_id varchar(5),
+sales_amount int
+);
+
+insert into shop_sales_data values('2022-02-14','S1',200);
+insert into shop_sales_data values('2022-02-15','S1',300);
+insert into shop_sales_data values('2022-02-14','S2',600);
+insert into shop_sales_data values('2022-02-15','S3',500);
+insert into shop_sales_data values('2022-02-18','S1',400);
+insert into shop_sales_data values('2022-02-17','S2',250);
+insert into shop_sales_data values('2022-02-20','S3',300);
+
+select * from shop_sales_data;
+
+-- calculate the total sales made by the shop
+select shop_id,
+        Sum(sales_amount) as total_sales
+from shop_sales_data
+group by shop_id;
+
+-- First Implementation of Window Function. 
+select *,
+       sum(sales_amount) over(partition by shop_id) as total_sum_of_sales
+from shop_sales_data;
+
+select *,
+       sum(sales_amount) over(order by sales_date) as running_sum_of_sales
+from shop_sales_data;
+
+-- Below Query is following the same pattern.  
+select *,
+       sum(sales_amount) over(order by sales_amount) as running_sum_of_sales
+from shop_sales_data;
+
+select *,
+sum(sales_amount) over(partition by shop_id order by sales_amount desc) as running_sum_of_sales
+from shop_sales_data;
+
+
+select *,
+       sum(sales_amount) over(partition by shop_id order by sales_date desc) 
+       as running_sum_of_sales,
+       avg(sales_amount) over(partition by shop_id order by sales_date desc) 
+       as running_avg_of_sales,
+       max(sales_amount) over(partition by shop_id order by sales_date desc) 
+       as running_max_of_sales,
+       min(sales_amount) over(partition by shop_id order by sales_date desc) 
+       as running_min_of_sales
+from shop_sales_data;
+
+create table amazon_sales_data
+(
+    sales_date date,
+    sales_amount int
+);
+
+insert into amazon_sales_data values('2022-08-21',500);
+insert into amazon_sales_data values('2022-08-22',600);
+insert into amazon_sales_data values('2022-08-19',300);
+
+insert into amazon_sales_data values('2022-08-18',200);
+
+insert into amazon_sales_data values('2022-08-25',800);
+
+-- calculate the date wise rolling average of amazon sales data   interview amazon
+select *,
+     avg(sales_amount) over(order by sales_date)
+as avg_sales from amazon_sales_data;
+
+
+
+-- Ranking Function  Interview Question
+-- Row_Number()
+-- Rank()
+-- Dense_Rank()
+-- V V IMP for important
+# Rank(), Row_Number(), Dense_Rank() window functions
+
+insert into shop_sales_data values('2022-02-19','S1',400);
+insert into shop_sales_data values('2022-02-20','S1',400);
+insert into shop_sales_data values('2022-02-22','S1',300);
+insert into shop_sales_data values('2022-02-25','S1',200);
+insert into shop_sales_data values('2022-02-15','S2',600);
+insert into shop_sales_data values('2022-02-16','S2',600);
+insert into shop_sales_data values('2022-02-16','S3',500);
+insert into shop_sales_data values('2022-02-18','S3',500);
+insert into shop_sales_data values('2022-02-19','S3',300);
+
+select *,
+       row_number() over(partition by shop_id order by sales_amount desc) as row_num,
+       rank() over(partition by shop_id order by sales_amount desc) as rank_val,
+       dense_rank() over(partition by shop_id order by sales_amount desc) as dense_rank_val
+from shop_sales_data;
+
+
+create table employees
+(
+    emp_id int,
+    salary int,
+    dept_name VARCHAR(30)
+
+);
+
+insert into employees values(1,10000,'Software');
+insert into employees values(2,11000,'Software');
+insert into employees values(3,11000,'Software');
+insert into employees values(4,11000,'Software');
+insert into employees values(5,15000,'Finance');
+insert into employees values(6,15000,'Finance');
+insert into employees values(7,15000,'IT');
+insert into employees values(8,12000,'HR');
+insert into employees values(9,12000,'HR');
+insert into employees values(10,11000,'HR');
+
+
+# Query - get one employee from each department who is getting maximum salary (employee can be random if salary is same)
+
+select 
+    tmp.*
+from (select *,
+        row_number() over(partition by dept_name order by salary desc) as row_num
+    from employees) tmp
+where tmp.row_num = 1;
+
+
+
+
+-- Query -get all top 2 ranked employee
+-- From each department who are getting maximum salary
+use class2_db;
+
+select 
+tmp.*
+from
+(select dense_rank() over(partition by dept_name order by salary desc) as dense_rank_top
+from employee) tmp
+where tmp.dense_rank_top <=2;
+
+-- Error Code: 1054. Unknown column 'dept_name' in 'window partition by'
+select 
+    tmp.*
+from (select *,
+        dense_rank() over(partition by dept_name order by salary desc) as dense_rank_num
+    from employees) tmp
+where tmp.dense_rank_num <= 2;
+
+
+-- lag and lead function
+-- first_value() 
+-- last_value()
+
+select * from shop_sales_data order by sales_date;
+
+-- LAG Window Function
+create table daily_sales
+(
+sales_date date,
+sales_amount int
+);
+
+insert into daily_sales values('2022-03-11',400);
+insert into daily_sales values('2022-03-12',500);
+insert into daily_sales values('2022-03-13',300);
+insert into daily_sales values('2022-03-14',600);
+insert into daily_sales values('2022-03-15',500);
+insert into daily_sales values('2022-03-16',200);
+
+select * from daily_sales;
+
+select *,
+    lag(sales_amount,1) over (order by sales_date) as previous_day_sales
+from daily_sales;
+-- How many step --> 1
+-- 400-NULL == NULL
+
+
+
+-- coalesce function --> It expect , separated value like
+-- coalesce(name,nickname)
+-- if both are null it will write the null values
+
+select *,
+   coalesce(lag(sales_amount,1) over(order by sales_date),0) as prev_sales
+from daily_sales;
+-- Query -- Calculate the difference of sales with previous day sales
+-- Here null will be derived
+select sales_date,
+       sales_amount as curr_day_sales,
+       lag(sales_amount,1) over(order by sales_date) as prev_sales,
+       sales_amount -lag(sales_amount,1) over(order by sales_date) as sales_diff
+from daily_sales;
+
+
+-- 400 null --> null
+-- to over come this below function we will use 
+-- 0 is default value for null 
+select sales_date,
+       sales_amount as curr_day_sales,
+       lag(sales_amount,1,0) over(order by sales_date) as prev_sales,
+       sales_amount -lag(sales_amount,1,0) over(order by sales_date) as sales_diff
+from daily_sales;
+
+-- lead function move the data up 
+-- Frame Clauses
+-- common table execution
+
+use class2_db;
+select * from daily_sales;
+
+select *,
+ sum(sales_amount) over(order by sales_date rows between 1 preceding and 1 following )
+ as prev_plus_next_sales_sum
+ from daily_sales;
+ 
+select *,
+sum(sales_amount) over (order by sales_date rows between 1 preceding and current row) as prev_plus_rows
+from daily_sales;
+
+
+select *,
+sum(sales_amount) over(order by sales_date rows between 2 preceding and 1 following) as prev_rows
+from daily_sales;
+
+select *,
+      sum(sales_amount) over(order by sales_date rows between unbounded preceding and current row) as prev_plus_next_sales_sum
+from daily_sales;
+
+select *,
+      sum(sales_amount) over(order by sales_date rows between current row and unbounded following) as prev_plus_next_sales_sum
+from daily_sales;
+
+select *,
+      sum(sales_amount) over(order by sales_date rows between unbounded preceding and unbounded following) as prev_plus_next_sales_sum
+from daily_sales;
+
+
+-- Calculate the running sum for a week
+select * ,
+sum(sales_amount) over (order by sales_date range between interval '6' day preceding and current row) as running_weekly_sum
+from daily_sales;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Common Table Expressions - Iterative and Recursive (CTE)
+-- function for reusablity 
+-- iterative 
+-- recursion
+create table amazon_employees(
+    emp_id int,
+    emp_name varchar(20),
+    dept_id int,
+    salary int
+
+ );
+
+ insert into amazon_employees values(1,'Shashank', 100, 10000);
+ insert into amazon_employees values(2,'Rahul', 100, 20000);
+ insert into amazon_employees values(3,'Amit', 101, 15000);
+ insert into amazon_employees values(4,'Mohit', 101, 17000);
+ insert into amazon_employees values(5,'Nikhil', 102, 30000);
+
+ create table department
+ (
+    dept_id int,
+    dept_name varchar(20) 
+  );
+
+  insert into department values(100, 'Software');
+    insert into department values(101, 'HR');
+      insert into department values(102, 'IT');
+        insert into department values(103, 'Finance');
+        
+        
+        
+-- write Query to print the name of department along
+-- with the total salary paid in each department
+-- Normal approach
+select d.dept_name ,tmp.total_salary
+from (select dept_id , sum(salary) as total_salary from amazon_employees group by dept_id) tmp
+inner join department d on tmp.dept_id = d.dept_id;
+
+
